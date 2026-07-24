@@ -284,10 +284,10 @@
   .info-row strong{ display:block; font-size:14.5px; color:var(--navy); margin-bottom:3px; font-weight:600; }
   .info-row span{ font-size:13.5px; color:var(--muted); }
 
- .global-reach img{
+.global-reach img{
   width:100%;
-  max-width:800px;
-  height:110px;
+  max-width:600px;
+  height:320px;
   object-fit:contain;
   margin:0 auto;
   display:block;
