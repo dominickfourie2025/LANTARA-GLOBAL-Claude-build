@@ -1,7 +1,51 @@
 /* ==========================================================================
    Lantara Global - Refined Master Stylesheet
-   Strict alignment with Homepage Mockup V2
+   China-accessible: all fonts self-hosted below, zero external CDN requests
    ========================================================================== */
+
+/* Self-hosted fonts — no Google Fonts, no external requests (mainland China blocks fonts.googleapis.com) */
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('assets/fonts/playfair-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('assets/fonts/playfair-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('assets/fonts/playfair-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Inter';
+    src: url('assets/fonts/inter-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Inter';
+    src: url('assets/fonts/inter-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Inter';
+    src: url('assets/fonts/inter-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
 
 :root {
     /* Color Palette */
@@ -20,8 +64,8 @@
     --text-muted: #64748B;
     --border-color: #E2E8F0;
 
-    /* Fonts */
-    --font-heading: 'Cormorant Garamond', Georgia, serif;
+    /* Fonts — self-hosted only, see @font-face rules above */
+    --font-heading: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
