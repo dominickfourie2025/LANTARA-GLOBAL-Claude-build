@@ -1,10 +1,10 @@
 /* =========================================
-   LANTARA GLOBAL - GLOBAL CSS V1.0
+   LANTARA GLOBAL - PREMIUM GLOBAL CSS V1.1
 ========================================= */
 :root {
-  --navy-900: #0a1a2f;   /* Deep Navy */
+  --navy-900: #0a1a2f;
   --navy-800: #13243e;
-  --gold-500: #c69c4c;   /* Warm Gold */
+  --gold-500: #c69c4c;
   --gold-400: #dfb56d;
   --white: #ffffff;
   --off-white: #f8f7f4;
@@ -17,75 +17,55 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: var(--font-sans);
-  color: var(--neutral-900);
-  background-color: var(--white);
-  line-height: 1.6;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  color: var(--navy-900);
-  letter-spacing: -0.02em;
-}
-
-a { text-decoration: none; color: inherit; }
+body { font-family: var(--font-sans); color: var(--neutral-900); background: var(--white); line-height: 1.6; }
+h1, h2, h3, h4 { font-family: var(--font-serif); color: var(--navy-900); letter-spacing: -0.02em; }
+a { text-decoration: none; color: inherit; transition: 0.3s; }
 ul { list-style: none; }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; display: block; object-fit: cover; }
 
-/* Buttons */
-.btn-primary {
-  display: inline-block;
-  background-color: var(--gold-500);
-  color: var(--navy-900);
-  padding: 0.9rem 2.2rem;
-  font-weight: 600;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.btn-primary:hover { background-color: var(--gold-400); }
-
-.btn-secondary {
-  display: inline-block;
-  background-color: transparent;
-  color: var(--white);
-  border: 1px solid var(--white);
-  padding: 0.9rem 2.2rem;
-  font-weight: 600;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.btn-secondary:hover { background-color: var(--white); color: var(--navy-900); }
-
-.btn-outline {
-  background: transparent;
-  border: 1px solid var(--navy-900);
-  color: var(--navy-900);
-  padding: 0.6rem 1.5rem;
-  font-weight: 500;
-  border-radius: 4px;
-  transition: 0.3s;
-  text-align: center;
-}
-.btn-outline:hover { background: var(--navy-900); color: var(--white); }
-
-.btn-apply {
-  background-color: var(--gold-500);
-  color: var(--white);
-  padding: 0.6rem 1.5rem;
-  font-weight: 500;
-  border-radius: 4px;
-  transition: 0.3s;
-  text-align: center;
-}
-.btn-apply:hover { background-color: var(--gold-400); }
-
-/* Utility Classes */
+/* --- GLOBAL LAYOUT UTILITIES --- */
 .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
 .text-center { text-align: center; }
-.mb-2 { margin-bottom: 2rem; }
-.mt-4 { margin-top: 4rem; }
+.text-gold { color: var(--gold-500); }
+.text-navy { color: var(--navy-900); }
+.bg-navy { background: var(--navy-900); color: var(--white); }
+.bg-offwhite { background: var(--off-white); }
+
+/* Flex & Grid Layouts */
+.flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; }
+@media (max-width: 992px) { .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; } }
+
+/* --- BUTTONS --- */
+.btn-primary { 
+  display: inline-block; background: var(--gold-500); color: var(--navy-900); 
+  padding: 0.9rem 2.2rem; font-weight: 600; border-radius: 4px; cursor: pointer; border: none;
+}
+.btn-primary:hover { background: var(--gold-400); transform: translateY(-2px); }
+
+.btn-secondary { 
+  display: inline-block; background: transparent; color: var(--white); 
+  border: 1px solid var(--white); padding: 0.9rem 2.2rem; font-weight: 600; border-radius: 4px; cursor: pointer;
+}
+.btn-secondary:hover { background: var(--white); color: var(--navy-900); }
+
+.btn-dark-outline {
+  display: inline-block; background: transparent; border: 1px solid var(--navy-900);
+  color: var(--navy-900); padding: 0.8rem 2rem; font-weight: 500; border-radius: 4px;
+}
+.btn-dark-outline:hover { background: var(--navy-900); color: var(--white); }
+
+/* --- HEADER & FOOTER --- */
+header { background: var(--navy-900); padding: 1rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.logo { font-size: 1.5rem; font-weight: bold; font-family: var(--font-serif); color: var(--gold-500); letter-spacing: 1px; }
+nav a { color: var(--white); margin: 0 1.2rem; font-weight: 500; font-size: 0.95rem; }
+nav a:hover, nav a.active { color: var(--gold-500); }
+.lang-switch { color: var(--neutral-400); font-size: 0.85rem; margin-left: 1rem; }
+
+footer { background: var(--navy-900); color: var(--white); padding: 4rem 2rem; text-align: center; border-top: 2px solid var(--gold-500); }
+footer .logo { margin-bottom: 1.5rem; }
+footer p { opacity: 0.7; font-size: 0.9rem; margin-bottom: 1rem; }
+.socials { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; }
+.socials a { color: var(--white); opacity: 0.8; }
+.socials a:hover { opacity: 1; color: var(--gold-500); }
