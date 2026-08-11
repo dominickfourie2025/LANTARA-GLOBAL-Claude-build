@@ -1,1117 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Your Candidate Profile | Lantara Global</title>
-<meta name="description" content="Join Lantara Global and gain access to carefully selected teaching opportunities across China. Create your candidate profile to apply for positions and receive personalised job recommendations.">
-<!-- Fonts self-hosted in styles.css @font-face — no external font CDN requests -->
-<link rel="stylesheet" href="styles.css">
-<!-- Note: Supabase JS is loaded from jsdelivr CDN, which is unreliable from mainland China.
-     Acceptable here since teacher sign-up/sign-in is used from outside China (confirmed). -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-    .signup-hero {
-        background: var(--navy-main);
-        color: #fff;
-        padding: 64px 0 160px;
-        position: relative;
-        overflow: hidden;
-    }
-    .signup-hero .container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
-        align-items: center;
-    }
-    .signup-eyebrow {
-        color: var(--gold-accent);
-        font-size: 0.8rem;
-        font-weight: 700;
-        letter-spacing: 2px;
-        margin-bottom: 16px;
-    }
-    .signup-hero h1 {
-        color: #fff;
-        font-size: 2.6rem;
-        margin-bottom: 20px;
-    }
-    .signup-hero p {
-        color: #CBD5E1;
-        font-size: 0.95rem;
-        line-height: 1.7;
-        max-width: 460px;
-    }
-    .signup-hero-media img {
-        width: 100%;
-        border-radius: 4px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-
-    .signup-panels {
-        max-width: 1280px;
-        margin: -110px auto 100px;
-        padding: 0 24px;
-        display: grid;
-        grid-template-columns: 1.4fr 1fr;
-        gap: 32px;
-        position: relative;
-        z-index: 2;
-    }
-
-    .signup-card {
-        background: var(--bg-white);
-        border-radius: 6px;
-        padding: 40px;
-        box-shadow: 0 20px 50px rgba(11, 22, 44, 0.12);
-    }
-    .signup-card-head {
-        display: flex;
-        align-items: flex-start;
-        gap: 16px;
-        margin-bottom: 28px;
-    }
-    .signup-card-head .icon-badge {
-        width: 44px;
-        height: 44px;
-        min-width: 44px;
-        border-radius: 50%;
-        background: var(--navy-main);
-        color: var(--gold-accent);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .signup-card-head h2 {
-        font-size: 1.35rem;
-        margin-bottom: 6px;
-    }
-    .signup-card-head p {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        line-height: 1.5;
-    }
-
-    .form-grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-    .form-field {
-        margin-bottom: 20px;
-    }
-    .form-field label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-    }
-    .form-field label .req {
-        color: var(--gold-hover);
-    }
-    .input-wrap {
-        position: relative;
-    }
-    .input-wrap svg.field-icon {
-        position: absolute;
-        left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        pointer-events: none;
-    }
-    .input-wrap input,
-    .input-wrap select {
-        width: 100%;
-        padding: 12px 14px 12px 40px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        font-family: var(--font-body);
-        font-size: 0.9rem;
-        color: var(--text-primary);
-        background: var(--bg-white);
-        appearance: none;
-    }
-    .input-wrap select { padding-right: 36px; }
-    .input-wrap input:focus,
-    .input-wrap select:focus {
-        outline: none;
-        border-color: var(--gold-accent);
-    }
-    .select-caret {
-        position: absolute;
-        right: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        pointer-events: none;
-    }
-    .toggle-visibility {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--text-muted);
-        padding: 4px;
-        display: flex;
-    }
-    .field-hint {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-top: 6px;
-    }
-
-    .cv-dropzone {
-        border: 1.5px dashed var(--border-color);
-        border-radius: 4px;
-        padding: 18px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        transition: 0.2s;
-    }
-    .cv-dropzone:hover { border-color: var(--gold-accent); background: var(--gold-light); }
-    .cv-dropzone .cv-icon { color: var(--gold-accent); flex-shrink: 0; }
-    .cv-dropzone .cv-doc-icon { margin-left: auto; color: var(--border-color); }
-    .cv-filename { font-weight: 600; color: var(--text-primary); }
-
-    .consent-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        margin: 24px 0;
-        font-size: 0.82rem;
-        color: var(--text-muted);
-    }
-    .consent-row input { margin-top: 3px; }
-    .consent-row a { color: var(--gold-hover); font-weight: 600; }
-
-    .form-error {
-        display: none;
-        background: #FEF2F2;
-        border: 1px solid #FCA5A5;
-        color: #B91C1C;
-        font-size: 0.82rem;
-        padding: 10px 14px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-    }
-    .form-success {
-        display: none;
-        background: #F0FDF4;
-        border: 1px solid #86EFAC;
-        color: #166534;
-        font-size: 0.85rem;
-        padding: 14px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-    }
-
-    .submit-btn {
-        width: 100%;
-        padding: 15px;
-        border: none;
-        border-radius: 4px;
-        background: var(--gold-accent);
-        color: var(--navy-dark);
-        font-weight: 700;
-        font-size: 0.9rem;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        transition: 0.2s;
-    }
-    .submit-btn:hover { background: var(--gold-hover); }
-    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    .signin-link {
-        text-align: center;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        margin-top: 18px;
-    }
-    .signin-link a { color: var(--gold-hover); font-weight: 700; }
-
-    /* Why panel */
-    .why-panel {
-        background: var(--gold-light);
-        border-radius: 6px;
-        padding: 40px 32px;
-    }
-    .why-panel h2 {
-        font-size: 1.35rem;
-        margin-bottom: 4px;
-    }
-    .why-divider {
-        width: 40px;
-        height: 3px;
-        background: var(--gold-accent);
-        margin: 14px 0 24px;
-    }
-    .why-item {
-        display: flex;
-        gap: 14px;
-        margin-bottom: 22px;
-    }
-    .why-item .icon-badge {
-        width: 40px;
-        height: 40px;
-        min-width: 40px;
-        border-radius: 50%;
-        background: var(--navy-main);
-        color: var(--gold-accent);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .why-item h3 {
-        font-family: var(--font-body);
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: var(--navy-main);
-        margin-bottom: 4px;
-    }
-    .why-item p {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        line-height: 1.5;
-    }
-    .privacy-note {
-        background: var(--bg-white);
-        border-radius: 4px;
-        padding: 18px;
-        display: flex;
-        gap: 12px;
-        margin-top: 8px;
-    }
-    .privacy-note svg { color: var(--gold-accent); flex-shrink: 0; }
-    .privacy-note h4 {
-        font-family: var(--font-body);
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--navy-main);
-        margin-bottom: 4px;
-    }
-    .privacy-note p {
-        font-size: 0.78rem;
-        color: var(--text-muted);
-        line-height: 1.5;
-    }
-
-    @media (max-width: 880px) {
-        .signup-hero .container { grid-template-columns: 1fr; text-align: center; }
-        .signup-hero p { margin: 0 auto; }
-        .signup-hero-media { order: -1; }
-        .signup-panels { grid-template-columns: 1fr; margin-top: -80px; }
-        .form-grid-2 { grid-template-columns: 1fr; }
-    }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Lantara Global connects Chinese schools with qualified, native English-speaking teachers.">
+  <title>Lantara Global | Connecting Chinese Schools with Qualified Teachers</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <header class="site-header">
-        <div class="container header-container">
-            <a href="index.html" class="logo">
-                <div class="logo-box">
-                    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="0.5" y="0.5" width="39" height="39" stroke="#CFA356" stroke-width="1" fill="#0B162C"/>
-                        <path d="M12 11V28H23" stroke="#FFFFFF" stroke-width="2" stroke-linecap="square"/>
-                        <path d="M28 17C26.5 14.5 23.5 13.5 20.5 14.5C17.5 15.5 16 18.5 16 21.5C16 25 18.5 27.5 22 27.5C25.5 27.5 28 25 28 21.5H22.5" stroke="#CFA356" stroke-width="2" stroke-linecap="square"/>
-                    </svg>
-                </div>
-                <div class="logo-text">
-                    <span class="brand-title">LANTARA</span>
-                    <span class="brand-sub">GLOBAL</span>
-                    <span class="brand-tagline">INTERNATIONAL TEACHING CAREERS IN CHINA</span>
-                </div>
-            </a>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="schools.html">Schools</a></li>
-                    <li><a href="teachers.html" class="active">Teachers</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="teacher-signin.html">Sign In</a></li>
-                </ul>
-            </nav>
-            <div class="header-actions">
-                <div class="lang-selector">
-                    <span class="lang active">EN</span>
-                    <span class="divider">|</span>
-                    <span class="lang">中文</span>
-                </div>
-                <a href="#contact" class="btn btn-outline-gold btn-sm">GET IN TOUCH</a>
-            </div>
-        </div>
-    </header>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="#" aria-label="Lantara Global home">
+      <img src="assets/lantara-global-logo.webp" alt="Lantara Global">
+    </a>
 
-    <section class="signup-hero">
-        <div class="container">
-            <div class="signup-hero-text">
-                <div class="signup-eyebrow">TEACH. GROW. EXPERIENCE CHINA.</div>
-                <h1>Create Your Candidate Profile</h1>
-                <p>Join Lantara Global and gain access to carefully selected teaching opportunities across China. Create your profile today to apply for positions, upload your CV and receive personalised job recommendations.</p>
-            </div>
-            <div class="signup-hero-media">
-                <img src="assets/images/signup-hero.webp" alt="Teacher greeting students outside an international school">
-            </div>
-        </div>
-    </section>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a href="#schools">Schools</a>
+      <a href="#teachers">Teachers</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
 
-    <div class="signup-panels">
-        <div class="signup-card">
-            <div class="signup-card-head">
-                <div class="icon-badge">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-                </div>
-                <div>
-                    <h2>Create Your Account</h2>
-                    <p>Fill in the basic information below to get started. You can complete the rest of your profile later.</p>
-                </div>
-            </div>
+    <div class="header-actions">
+      <a class="language" href="#">EN <span>|</span> 中文</a>
+      <a class="header-cta" href="#contact">GET IN TOUCH</a>
+      <button class="mobile-menu" type="button" aria-label="Open navigation">☰</button>
+    </div>
+  </div>
+</header>
 
-            <div id="form-error" class="form-error"></div>
-            <div id="form-success" class="form-success"></div>
+<main>
 
-            <form id="signup-form" novalidate>
-                <div class="form-grid-2">
-                    <div class="form-field">
-                        <label for="first-name">First Name <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-                            <input type="text" id="first-name" name="first_name" placeholder="Enter your first name" required>
-                        </div>
-                    </div>
-                    <div class="form-field">
-                        <label for="last-name">Last Name <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-                            <input type="text" id="last-name" name="last_name" placeholder="Enter your last name" required>
-                        </div>
-                    </div>
-                </div>
+  <section class="hero">
+    <img class="hero-image" src="assets/hero-image-home.webp" alt="">
+    <div class="hero-shade"></div>
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <h1>
+          Connecting Chinese Schools<br>
+          with Qualified,<br>
+          <span>Native English-speaking<br>Teachers</span>
+        </h1>
 
-                <div class="form-field">
-                    <label for="email">Email Address <span class="req">*</span></label>
-                    <div class="input-wrap">
-                        <svg class="field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 6l9 7 9-7"/></svg>
-                        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
-                    </div>
-                </div>
+        <p>
+          Professional recruitment for China's education sector,<br class="desktop-only">
+          connecting reputable schools with carefully screened<br class="desktop-only">
+          teachers from <strong>Native English-speaking</strong> countries.
+        </p>
 
-                <div class="form-grid-2">
-                    <div class="form-field">
-                        <label for="password">Password <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-                            <input type="password" id="password" name="password" placeholder="Create a password" minlength="8" required>
-                            <button type="button" class="toggle-visibility" data-target="password" aria-label="Show password">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </button>
-                        </div>
-                        <div class="field-hint">Use 8 or more characters with a combination of letters, numbers and symbols.</div>
-                    </div>
-                    <div class="form-field">
-                        <label for="confirm-password">Confirm Password <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-                            <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm your password" minlength="8" required>
-                            <button type="button" class="toggle-visibility" data-target="confirm-password" aria-label="Show password">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-field">
-                    <label for="nationality">Nationality <span class="req">*</span></label>
-                    <div class="input-wrap">
-                        <svg class="field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 5.7 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.7-4-9s1.5-6.5 4-9z"/></svg>
-                        <select id="nationality" name="nationality" required>
-                            <option value="" selected disabled>Select your nationality</option>
-                        <option value="Afghanistan">Afghanistan</option>
-                        <option value="Albania">Albania</option>
-                        <option value="Algeria">Algeria</option>
-                        <option value="Andorra">Andorra</option>
-                        <option value="Angola">Angola</option>
-                        <option value="Argentina">Argentina</option>
-                        <option value="Armenia">Armenia</option>
-                        <option value="Australia">Australia</option>
-                        <option value="Austria">Austria</option>
-                        <option value="Azerbaijan">Azerbaijan</option>
-                        <option value="Bahamas">Bahamas</option>
-                        <option value="Bahrain">Bahrain</option>
-                        <option value="Bangladesh">Bangladesh</option>
-                        <option value="Barbados">Barbados</option>
-                        <option value="Belarus">Belarus</option>
-                        <option value="Belgium">Belgium</option>
-                        <option value="Belize">Belize</option>
-                        <option value="Benin">Benin</option>
-                        <option value="Bhutan">Bhutan</option>
-                        <option value="Bolivia">Bolivia</option>
-                        <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
-                        <option value="Botswana">Botswana</option>
-                        <option value="Brazil">Brazil</option>
-                        <option value="Brunei">Brunei</option>
-                        <option value="Bulgaria">Bulgaria</option>
-                        <option value="Burkina Faso">Burkina Faso</option>
-                        <option value="Burundi">Burundi</option>
-                        <option value="Cambodia">Cambodia</option>
-                        <option value="Cameroon">Cameroon</option>
-                        <option value="Canada">Canada</option>
-                        <option value="Cape Verde">Cape Verde</option>
-                        <option value="Central African Republic">Central African Republic</option>
-                        <option value="Chad">Chad</option>
-                        <option value="Chile">Chile</option>
-                        <option value="China">China</option>
-                        <option value="Colombia">Colombia</option>
-                        <option value="Comoros">Comoros</option>
-                        <option value="Congo">Congo</option>
-                        <option value="Costa Rica">Costa Rica</option>
-                        <option value="Croatia">Croatia</option>
-                        <option value="Cuba">Cuba</option>
-                        <option value="Cyprus">Cyprus</option>
-                        <option value="Czech Republic">Czech Republic</option>
-                        <option value="Denmark">Denmark</option>
-                        <option value="Djibouti">Djibouti</option>
-                        <option value="Dominica">Dominica</option>
-                        <option value="Dominican Republic">Dominican Republic</option>
-                        <option value="Ecuador">Ecuador</option>
-                        <option value="Egypt">Egypt</option>
-                        <option value="El Salvador">El Salvador</option>
-                        <option value="Equatorial Guinea">Equatorial Guinea</option>
-                        <option value="Eritrea">Eritrea</option>
-                        <option value="Estonia">Estonia</option>
-                        <option value="Eswatini">Eswatini</option>
-                        <option value="Ethiopia">Ethiopia</option>
-                        <option value="Fiji">Fiji</option>
-                        <option value="Finland">Finland</option>
-                        <option value="France">France</option>
-                        <option value="Gabon">Gabon</option>
-                        <option value="Gambia">Gambia</option>
-                        <option value="Georgia">Georgia</option>
-                        <option value="Germany">Germany</option>
-                        <option value="Ghana">Ghana</option>
-                        <option value="Greece">Greece</option>
-                        <option value="Grenada">Grenada</option>
-                        <option value="Guatemala">Guatemala</option>
-                        <option value="Guinea">Guinea</option>
-                        <option value="Guinea-Bissau">Guinea-Bissau</option>
-                        <option value="Guyana">Guyana</option>
-                        <option value="Haiti">Haiti</option>
-                        <option value="Honduras">Honduras</option>
-                        <option value="Hungary">Hungary</option>
-                        <option value="Iceland">Iceland</option>
-                        <option value="India">India</option>
-                        <option value="Indonesia">Indonesia</option>
-                        <option value="Iran">Iran</option>
-                        <option value="Iraq">Iraq</option>
-                        <option value="Ireland">Ireland</option>
-                        <option value="Israel">Israel</option>
-                        <option value="Italy">Italy</option>
-                        <option value="Ivory Coast">Ivory Coast</option>
-                        <option value="Jamaica">Jamaica</option>
-                        <option value="Japan">Japan</option>
-                        <option value="Jordan">Jordan</option>
-                        <option value="Kazakhstan">Kazakhstan</option>
-                        <option value="Kenya">Kenya</option>
-                        <option value="Kiribati">Kiribati</option>
-                        <option value="Kosovo">Kosovo</option>
-                        <option value="Kuwait">Kuwait</option>
-                        <option value="Kyrgyzstan">Kyrgyzstan</option>
-                        <option value="Laos">Laos</option>
-                        <option value="Latvia">Latvia</option>
-                        <option value="Lebanon">Lebanon</option>
-                        <option value="Lesotho">Lesotho</option>
-                        <option value="Liberia">Liberia</option>
-                        <option value="Libya">Libya</option>
-                        <option value="Liechtenstein">Liechtenstein</option>
-                        <option value="Lithuania">Lithuania</option>
-                        <option value="Luxembourg">Luxembourg</option>
-                        <option value="Madagascar">Madagascar</option>
-                        <option value="Malawi">Malawi</option>
-                        <option value="Malaysia">Malaysia</option>
-                        <option value="Maldives">Maldives</option>
-                        <option value="Mali">Mali</option>
-                        <option value="Malta">Malta</option>
-                        <option value="Marshall Islands">Marshall Islands</option>
-                        <option value="Mauritania">Mauritania</option>
-                        <option value="Mauritius">Mauritius</option>
-                        <option value="Mexico">Mexico</option>
-                        <option value="Micronesia">Micronesia</option>
-                        <option value="Moldova">Moldova</option>
-                        <option value="Monaco">Monaco</option>
-                        <option value="Mongolia">Mongolia</option>
-                        <option value="Montenegro">Montenegro</option>
-                        <option value="Morocco">Morocco</option>
-                        <option value="Mozambique">Mozambique</option>
-                        <option value="Myanmar">Myanmar</option>
-                        <option value="Namibia">Namibia</option>
-                        <option value="Nauru">Nauru</option>
-                        <option value="Nepal">Nepal</option>
-                        <option value="Netherlands">Netherlands</option>
-                        <option value="New Zealand">New Zealand</option>
-                        <option value="Nicaragua">Nicaragua</option>
-                        <option value="Niger">Niger</option>
-                        <option value="Nigeria">Nigeria</option>
-                        <option value="North Korea">North Korea</option>
-                        <option value="North Macedonia">North Macedonia</option>
-                        <option value="Norway">Norway</option>
-                        <option value="Oman">Oman</option>
-                        <option value="Pakistan">Pakistan</option>
-                        <option value="Palau">Palau</option>
-                        <option value="Palestine">Palestine</option>
-                        <option value="Panama">Panama</option>
-                        <option value="Papua New Guinea">Papua New Guinea</option>
-                        <option value="Paraguay">Paraguay</option>
-                        <option value="Peru">Peru</option>
-                        <option value="Philippines">Philippines</option>
-                        <option value="Poland">Poland</option>
-                        <option value="Portugal">Portugal</option>
-                        <option value="Qatar">Qatar</option>
-                        <option value="Romania">Romania</option>
-                        <option value="Russia">Russia</option>
-                        <option value="Rwanda">Rwanda</option>
-                        <option value="Saint Lucia">Saint Lucia</option>
-                        <option value="Samoa">Samoa</option>
-                        <option value="San Marino">San Marino</option>
-                        <option value="Sao Tome and Principe">Sao Tome and Principe</option>
-                        <option value="Saudi Arabia">Saudi Arabia</option>
-                        <option value="Senegal">Senegal</option>
-                        <option value="Serbia">Serbia</option>
-                        <option value="Seychelles">Seychelles</option>
-                        <option value="Sierra Leone">Sierra Leone</option>
-                        <option value="Singapore">Singapore</option>
-                        <option value="Slovakia">Slovakia</option>
-                        <option value="Slovenia">Slovenia</option>
-                        <option value="Solomon Islands">Solomon Islands</option>
-                        <option value="Somalia">Somalia</option>
-                        <option value="South Africa">South Africa</option>
-                        <option value="South Korea">South Korea</option>
-                        <option value="South Sudan">South Sudan</option>
-                        <option value="Spain">Spain</option>
-                        <option value="Sri Lanka">Sri Lanka</option>
-                        <option value="Sudan">Sudan</option>
-                        <option value="Suriname">Suriname</option>
-                        <option value="Sweden">Sweden</option>
-                        <option value="Switzerland">Switzerland</option>
-                        <option value="Syria">Syria</option>
-                        <option value="Taiwan">Taiwan</option>
-                        <option value="Tajikistan">Tajikistan</option>
-                        <option value="Tanzania">Tanzania</option>
-                        <option value="Thailand">Thailand</option>
-                        <option value="Timor-Leste">Timor-Leste</option>
-                        <option value="Togo">Togo</option>
-                        <option value="Tonga">Tonga</option>
-                        <option value="Trinidad and Tobago">Trinidad and Tobago</option>
-                        <option value="Tunisia">Tunisia</option>
-                        <option value="Turkey">Turkey</option>
-                        <option value="Turkmenistan">Turkmenistan</option>
-                        <option value="Tuvalu">Tuvalu</option>
-                        <option value="Uganda">Uganda</option>
-                        <option value="Ukraine">Ukraine</option>
-                        <option value="United Arab Emirates">United Arab Emirates</option>
-                        <option value="United Kingdom">United Kingdom</option>
-                        <option value="United States">United States</option>
-                        <option value="Uruguay">Uruguay</option>
-                        <option value="Uzbekistan">Uzbekistan</option>
-                        <option value="Vanuatu">Vanuatu</option>
-                        <option value="Vatican City">Vatican City</option>
-                        <option value="Venezuela">Venezuela</option>
-                        <option value="Vietnam">Vietnam</option>
-                        <option value="Yemen">Yemen</option>
-                        <option value="Zambia">Zambia</option>
-                        <option value="Zimbabwe">Zimbabwe</option>
-                        </select>
-                        <svg class="select-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-                    </div>
-                </div>
-
-                <div class="form-field">
-                    <label for="country">Current Country of Residence <span class="req">*</span></label>
-                    <div class="input-wrap">
-                        <svg class="field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 5.7 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.7-4-9s1.5-6.5 4-9z"/></svg>
-                        <select id="country" name="country_of_residence" required>
-                            <option value="" selected disabled>Select your current country</option>
-                        <option value="Afghanistan">Afghanistan</option>
-                        <option value="Albania">Albania</option>
-                        <option value="Algeria">Algeria</option>
-                        <option value="Andorra">Andorra</option>
-                        <option value="Angola">Angola</option>
-                        <option value="Argentina">Argentina</option>
-                        <option value="Armenia">Armenia</option>
-                        <option value="Australia">Australia</option>
-                        <option value="Austria">Austria</option>
-                        <option value="Azerbaijan">Azerbaijan</option>
-                        <option value="Bahamas">Bahamas</option>
-                        <option value="Bahrain">Bahrain</option>
-                        <option value="Bangladesh">Bangladesh</option>
-                        <option value="Barbados">Barbados</option>
-                        <option value="Belarus">Belarus</option>
-                        <option value="Belgium">Belgium</option>
-                        <option value="Belize">Belize</option>
-                        <option value="Benin">Benin</option>
-                        <option value="Bhutan">Bhutan</option>
-                        <option value="Bolivia">Bolivia</option>
-                        <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
-                        <option value="Botswana">Botswana</option>
-                        <option value="Brazil">Brazil</option>
-                        <option value="Brunei">Brunei</option>
-                        <option value="Bulgaria">Bulgaria</option>
-                        <option value="Burkina Faso">Burkina Faso</option>
-                        <option value="Burundi">Burundi</option>
-                        <option value="Cambodia">Cambodia</option>
-                        <option value="Cameroon">Cameroon</option>
-                        <option value="Canada">Canada</option>
-                        <option value="Cape Verde">Cape Verde</option>
-                        <option value="Central African Republic">Central African Republic</option>
-                        <option value="Chad">Chad</option>
-                        <option value="Chile">Chile</option>
-                        <option value="China">China</option>
-                        <option value="Colombia">Colombia</option>
-                        <option value="Comoros">Comoros</option>
-                        <option value="Congo">Congo</option>
-                        <option value="Costa Rica">Costa Rica</option>
-                        <option value="Croatia">Croatia</option>
-                        <option value="Cuba">Cuba</option>
-                        <option value="Cyprus">Cyprus</option>
-                        <option value="Czech Republic">Czech Republic</option>
-                        <option value="Denmark">Denmark</option>
-                        <option value="Djibouti">Djibouti</option>
-                        <option value="Dominica">Dominica</option>
-                        <option value="Dominican Republic">Dominican Republic</option>
-                        <option value="Ecuador">Ecuador</option>
-                        <option value="Egypt">Egypt</option>
-                        <option value="El Salvador">El Salvador</option>
-                        <option value="Equatorial Guinea">Equatorial Guinea</option>
-                        <option value="Eritrea">Eritrea</option>
-                        <option value="Estonia">Estonia</option>
-                        <option value="Eswatini">Eswatini</option>
-                        <option value="Ethiopia">Ethiopia</option>
-                        <option value="Fiji">Fiji</option>
-                        <option value="Finland">Finland</option>
-                        <option value="France">France</option>
-                        <option value="Gabon">Gabon</option>
-                        <option value="Gambia">Gambia</option>
-                        <option value="Georgia">Georgia</option>
-                        <option value="Germany">Germany</option>
-                        <option value="Ghana">Ghana</option>
-                        <option value="Greece">Greece</option>
-                        <option value="Grenada">Grenada</option>
-                        <option value="Guatemala">Guatemala</option>
-                        <option value="Guinea">Guinea</option>
-                        <option value="Guinea-Bissau">Guinea-Bissau</option>
-                        <option value="Guyana">Guyana</option>
-                        <option value="Haiti">Haiti</option>
-                        <option value="Honduras">Honduras</option>
-                        <option value="Hungary">Hungary</option>
-                        <option value="Iceland">Iceland</option>
-                        <option value="India">India</option>
-                        <option value="Indonesia">Indonesia</option>
-                        <option value="Iran">Iran</option>
-                        <option value="Iraq">Iraq</option>
-                        <option value="Ireland">Ireland</option>
-                        <option value="Israel">Israel</option>
-                        <option value="Italy">Italy</option>
-                        <option value="Ivory Coast">Ivory Coast</option>
-                        <option value="Jamaica">Jamaica</option>
-                        <option value="Japan">Japan</option>
-                        <option value="Jordan">Jordan</option>
-                        <option value="Kazakhstan">Kazakhstan</option>
-                        <option value="Kenya">Kenya</option>
-                        <option value="Kiribati">Kiribati</option>
-                        <option value="Kosovo">Kosovo</option>
-                        <option value="Kuwait">Kuwait</option>
-                        <option value="Kyrgyzstan">Kyrgyzstan</option>
-                        <option value="Laos">Laos</option>
-                        <option value="Latvia">Latvia</option>
-                        <option value="Lebanon">Lebanon</option>
-                        <option value="Lesotho">Lesotho</option>
-                        <option value="Liberia">Liberia</option>
-                        <option value="Libya">Libya</option>
-                        <option value="Liechtenstein">Liechtenstein</option>
-                        <option value="Lithuania">Lithuania</option>
-                        <option value="Luxembourg">Luxembourg</option>
-                        <option value="Madagascar">Madagascar</option>
-                        <option value="Malawi">Malawi</option>
-                        <option value="Malaysia">Malaysia</option>
-                        <option value="Maldives">Maldives</option>
-                        <option value="Mali">Mali</option>
-                        <option value="Malta">Malta</option>
-                        <option value="Marshall Islands">Marshall Islands</option>
-                        <option value="Mauritania">Mauritania</option>
-                        <option value="Mauritius">Mauritius</option>
-                        <option value="Mexico">Mexico</option>
-                        <option value="Micronesia">Micronesia</option>
-                        <option value="Moldova">Moldova</option>
-                        <option value="Monaco">Monaco</option>
-                        <option value="Mongolia">Mongolia</option>
-                        <option value="Montenegro">Montenegro</option>
-                        <option value="Morocco">Morocco</option>
-                        <option value="Mozambique">Mozambique</option>
-                        <option value="Myanmar">Myanmar</option>
-                        <option value="Namibia">Namibia</option>
-                        <option value="Nauru">Nauru</option>
-                        <option value="Nepal">Nepal</option>
-                        <option value="Netherlands">Netherlands</option>
-                        <option value="New Zealand">New Zealand</option>
-                        <option value="Nicaragua">Nicaragua</option>
-                        <option value="Niger">Niger</option>
-                        <option value="Nigeria">Nigeria</option>
-                        <option value="North Korea">North Korea</option>
-                        <option value="North Macedonia">North Macedonia</option>
-                        <option value="Norway">Norway</option>
-                        <option value="Oman">Oman</option>
-                        <option value="Pakistan">Pakistan</option>
-                        <option value="Palau">Palau</option>
-                        <option value="Palestine">Palestine</option>
-                        <option value="Panama">Panama</option>
-                        <option value="Papua New Guinea">Papua New Guinea</option>
-                        <option value="Paraguay">Paraguay</option>
-                        <option value="Peru">Peru</option>
-                        <option value="Philippines">Philippines</option>
-                        <option value="Poland">Poland</option>
-                        <option value="Portugal">Portugal</option>
-                        <option value="Qatar">Qatar</option>
-                        <option value="Romania">Romania</option>
-                        <option value="Russia">Russia</option>
-                        <option value="Rwanda">Rwanda</option>
-                        <option value="Saint Lucia">Saint Lucia</option>
-                        <option value="Samoa">Samoa</option>
-                        <option value="San Marino">San Marino</option>
-                        <option value="Sao Tome and Principe">Sao Tome and Principe</option>
-                        <option value="Saudi Arabia">Saudi Arabia</option>
-                        <option value="Senegal">Senegal</option>
-                        <option value="Serbia">Serbia</option>
-                        <option value="Seychelles">Seychelles</option>
-                        <option value="Sierra Leone">Sierra Leone</option>
-                        <option value="Singapore">Singapore</option>
-                        <option value="Slovakia">Slovakia</option>
-                        <option value="Slovenia">Slovenia</option>
-                        <option value="Solomon Islands">Solomon Islands</option>
-                        <option value="Somalia">Somalia</option>
-                        <option value="South Africa">South Africa</option>
-                        <option value="South Korea">South Korea</option>
-                        <option value="South Sudan">South Sudan</option>
-                        <option value="Spain">Spain</option>
-                        <option value="Sri Lanka">Sri Lanka</option>
-                        <option value="Sudan">Sudan</option>
-                        <option value="Suriname">Suriname</option>
-                        <option value="Sweden">Sweden</option>
-                        <option value="Switzerland">Switzerland</option>
-                        <option value="Syria">Syria</option>
-                        <option value="Taiwan">Taiwan</option>
-                        <option value="Tajikistan">Tajikistan</option>
-                        <option value="Tanzania">Tanzania</option>
-                        <option value="Thailand">Thailand</option>
-                        <option value="Timor-Leste">Timor-Leste</option>
-                        <option value="Togo">Togo</option>
-                        <option value="Tonga">Tonga</option>
-                        <option value="Trinidad and Tobago">Trinidad and Tobago</option>
-                        <option value="Tunisia">Tunisia</option>
-                        <option value="Turkey">Turkey</option>
-                        <option value="Turkmenistan">Turkmenistan</option>
-                        <option value="Tuvalu">Tuvalu</option>
-                        <option value="Uganda">Uganda</option>
-                        <option value="Ukraine">Ukraine</option>
-                        <option value="United Arab Emirates">United Arab Emirates</option>
-                        <option value="United Kingdom">United Kingdom</option>
-                        <option value="United States">United States</option>
-                        <option value="Uruguay">Uruguay</option>
-                        <option value="Uzbekistan">Uzbekistan</option>
-                        <option value="Vanuatu">Vanuatu</option>
-                        <option value="Vatican City">Vatican City</option>
-                        <option value="Venezuela">Venezuela</option>
-                        <option value="Vietnam">Vietnam</option>
-                        <option value="Yemen">Yemen</option>
-                        <option value="Zambia">Zambia</option>
-                        <option value="Zimbabwe">Zimbabwe</option>
-                        </select>
-                        <svg class="select-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-                    </div>
-                </div>
-
-                <div class="form-field">
-                    <label>Upload Your CV <span style="font-weight:400; color:var(--text-muted);">(Optional but recommended)</span></label>
-                    <div class="cv-dropzone" id="cv-dropzone">
-                        <svg class="cv-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-                        <span id="cv-label">Click to upload your CV or drag and drop<br><span style="font-size:0.75rem;">PDF or DOC, max 5MB</span></span>
-                        <svg class="cv-doc-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h7l4 4v14H7z"/><path d="M9 12h6M9 16h6"/></svg>
-                    </div>
-                    <input type="file" id="cv-file" name="cv_file" accept=".pdf,.doc,.docx" style="display:none;">
-                </div>
-
-                <div class="consent-row">
-                    <input type="checkbox" id="consent" name="consent" required>
-                    <label for="consent">I agree to the <a href="#">Privacy Policy</a> and <a href="#">Terms of Service</a>. <span class="req">*</span></label>
-                </div>
-
-                <button type="submit" class="submit-btn" id="submit-btn">
-                    Create Candidate Profile
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </button>
-
-                <div class="signin-link">Already have an account? <a href="teacher-signin.html">Sign In</a></div>
-            </form>
+        <div class="hero-buttons">
+          <a class="btn btn-gold" href="#schools">FOR SCHOOLS</a>
+          <a class="btn btn-dark-outline" href="#teachers">FOR TEACHERS</a>
         </div>
 
-        <div class="why-panel">
-            <h2>Why create a profile?</h2>
-            <div class="why-divider"></div>
-
-            <div class="why-item">
-                <div class="icon-badge"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/></svg></div>
-                <div><h3>Apply for current vacancies</h3><p>Access a wide range of teaching opportunities across China.</p></div>
-            </div>
-            <div class="why-item">
-                <div class="icon-badge"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7z"/><path d="M9 12h6M9 16h6"/></svg></div>
-                <div><h3>Upload your CV securely</h3><p>Your information is safe and only shared with relevant schools.</p></div>
-            </div>
-            <div class="why-item">
-                <div class="icon-badge"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.4-9.5-8.8C.7 8.6 2 5 5.5 4.2 8 3.6 10 5 12 7c2-2 4-3.4 6.5-2.8C22 5 23.3 8.6 21.5 12.2 19 16.6 12 21 12 21z"/></svg></div>
-                <div><h3>Save favourite jobs</h3><p>Bookmark jobs you are interested in and apply when you're ready.</p></div>
-            </div>
-            <div class="why-item">
-                <div class="icon-badge"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
-                <div><h3>Receive personalised job alerts</h3><p>Get new job opportunities delivered straight to your inbox.</p></div>
-            </div>
-            <div class="why-item">
-                <div class="icon-badge"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 15l3-3 3 2 4-5"/></svg></div>
-                <div><h3>Track your applications</h3><p>Monitor the status of your applications in one central place.</p></div>
-            </div>
-            <div class="why-item">
-                <div class="icon-badge"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div>
-                <div><h3>Dedicated recruitment consultant</h3><p>Our team is here to support you every step of the way.</p></div>
-            </div>
-
-            <div class="privacy-note">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.4-3 8.4-7 9-4-0.6-7-4.6-7-9V6z"/></svg>
-                <div>
-                    <h4>Your privacy is important to us</h4>
-                    <p>We are committed to protecting your personal information and will never share it with third parties.</p>
-                </div>
-            </div>
+        <div class="hero-points">
+          <span><i class="check-circle">✓</i> Professional Recruitment</span>
+          <span><i class="check-circle">✓</i> Qualified Candidates</span>
+          <span><i class="check-circle">✓</i> Long-Term Partnerships</span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="why section">
+    <div class="container">
+      <div class="section-title">
+        <h2>WHY LANTARA?</h2>
+        <div class="gold-rule"></div>
+        <p>We help Chinese schools recruit exceptional native English-speaking teachers<br class="desktop-only"> through a transparent, professional and tailored approach.</p>
+      </div>
+
+      <div class="why-grid">
+        <article class="why-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="27" cy="21" r="9"></circle>
+              <circle cx="45" cy="25" r="7"></circle>
+              <path d="M9 49c2-10 9-16 18-16s16 6 18 16"></path>
+              <path d="M35 48c2-6 6-10 12-10 5 0 9 3 11 8"></path>
+              <circle cx="49" cy="47" r="7"></circle>
+              <path d="m53 52 7 7"></path>
+            </svg>
+          </div>
+          <div>
+            <h3>Rigorous Screening</h3>
+            <p>Every candidate is carefully screened, interviewed and reference-checked to ensure classroom excellence.</p>
+          </div>
+        </article>
+
+        <article class="why-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="24"></circle>
+              <path d="M8 32h48M32 8c8 7 12 15 12 24s-4 17-12 24M32 8c-8 7-12 15-12 24s4 17 12 24"></path>
+              <path d="M13 18c11 5 27 5 38 0M13 46c11-5 27-5 38 0"></path>
+            </svg>
+          </div>
+          <div>
+            <h3>China Education Experts</h3>
+            <p>Our team understands China's education landscape and the unique needs of schools across the country.</p>
+          </div>
+        </article>
+
+        <article class="why-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M7 24 20 14l14 10-14 10z"></path>
+              <path d="m29 24 7-5c3-2 6-1 8 1l8 8c2 2 2 5 0 7l-3 3c-2 2-5 2-7 0l-7-7"></path>
+              <path d="m32 31-5 5c-2 2-5 2-7 0l-5-5c-2-2-2-5 0-7"></path>
+            </svg>
+          </div>
+          <div>
+            <h3>Partnership Focused</h3>
+            <p>We build long-term relationships with schools based on trust, reliability and outstanding results.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="schools" class="split-section">
+    <div class="split-copy">
+      <p class="kicker">FOR SCHOOLS</p>
+      <h2>Recruiting Teachers.<br>Building Stronger Schools.</h2>
+      <p>We provide end-to-end recruitment solutions tailored to your school's requirements. From candidate search to arrival support, we handle the details so you can focus on your school.</p>
+      <ul class="checks">
+        <li>Access to a global network of qualified teachers</li>
+        <li>Rigorous screening and vetting process</li>
+        <li>Interview coordination and school matching</li>
+        <li>Visa guidance and placement support</li>
+      </ul>
+      <a class="btn btn-navy" href="#contact">REQUEST RECRUITMENT</a>
+    </div>
+    <div class="split-image">
+      <img src="assets/school-image.webp" alt="Chinese school campus">
+    </div>
+  </section>
+
+  <section id="teachers" class="split-section teacher-section">
+    <div class="split-image">
+      <img src="assets/teachers-image.webp" alt="Teacher working with Chinese students">
+    </div>
+    <div class="split-copy">
+      <p class="kicker">FOR TEACHERS</p>
+      <h2>Meaningful Opportunities.<br>Professional Support.</h2>
+      <p>We connect qualified native English-speaking teachers with reputable schools across China and support you every step of the way.</p>
+      <ul class="checks">
+        <li>Opportunities in cities across China</li>
+        <li>Competitive packages and benefits</li>
+        <li>Personalised school matching</li>
+        <li>Interview preparation and ongoing support</li>
+      </ul>
+      <a class="btn btn-navy" href="#">VIEW OPPORTUNITIES</a>
+    </div>
+  </section>
+
+  <section class="process section">
+    <div class="container">
+      <div class="section-title process-title">
+        <h2>OUR RECRUITMENT PROCESS</h2>
+      </div>
+
+      <div class="process-grid">
+        <article class="process-item">
+          <div class="process-icon">♧</div>
+          <h3>1. Consultation</h3>
+          <p>We learn about your school's needs and requirements.</p>
+        </article>
+        <article class="process-item">
+          <div class="process-icon">⌕</div>
+          <h3>2. Candidate Screening</h3>
+          <p>We source and rigorously screen qualified candidates.</p>
+        </article>
+        <article class="process-item">
+          <div class="process-icon">♧</div>
+          <h3>3. School Matching</h3>
+          <p>We match you with the best candidates for your school.</p>
+        </article>
+        <article class="process-item">
+          <div class="process-icon">▣</div>
+          <h3>4. Interview</h3>
+          <p>We coordinate interviews and provide support throughout.</p>
+        </article>
+        <article class="process-item">
+          <div class="process-icon">▤</div>
+          <h3>5. Placement</h3>
+          <p>We assist with contracts, documentation and pre-departure.</p>
+        </article>
+        <article class="process-item">
+          <div class="process-icon">✈</div>
+          <h3>6. Ongoing Support</h3>
+          <p>We support both schools and teachers long after arrival.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="about split-section">
+    <div class="split-copy">
+      <h2>ABOUT LANTARA GLOBAL</h2>
+      <div class="gold-rule left"></div>
+      <p>Lantara Global is a specialist education recruitment agency dedicated to connecting Chinese schools with qualified native English-speaking teachers from recognised Native English-speaking countries.</p>
+      <p>Our mission is to build long-term partnerships that enhance learning, inspire students and strengthen schools.</p>
+      <a class="btn btn-navy" href="#">LEARN MORE ABOUT US</a>
+    </div>
+    <div class="split-image">
+      <img src="assets/about-image-great-wall.webp" alt="The Great Wall of China at sunset">
+    </div>
+  </section>
+
+  <section id="contact" class="contact section">
+    <div class="container contact-grid">
+      <div class="contact-form-side">
+        <h2>GET IN TOUCH</h2>
+        <div class="gold-rule left"></div>
+        <form>
+          <div class="form-row">
+            <input type="text" placeholder="Your Name" aria-label="Your Name">
+            <input type="email" placeholder="Email Address" aria-label="Email Address">
+          </div>
+          <input type="text" placeholder="Organisation / School" aria-label="Organisation or School">
+          <textarea rows="4" placeholder="Your Message" aria-label="Your Message"></textarea>
+          <button class="btn btn-gold" type="submit">SEND ENQUIRY</button>
+        </form>
+      </div>
+
+      <div class="contact-info">
+        <p class="contact-kicker">CONTACT INFORMATION</p>
+        <p><span class="contact-symbol">✉</span> hello@lantaraglobal.com</p>
+        <p><span class="contact-symbol">◷</span> Monday – Friday<br><span class="indent">9:00 AM – 6:00 PM (GMT+8)</span></p>
+        <p><span class="contact-symbol">◎</span> Serving Schools Across China<br><span class="indent">Connecting Teachers Worldwide</span></p>
+      </div>
+
+      <img class="contact-map" src="assets/global-map-image.webp" alt="" aria-hidden="true">
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-main">
+    <div class="footer-brand">
+      <img src="assets/lantara-global-logo.webp" alt="Lantara Global">
+      <p>INTERNATIONAL TEACHING<br>CAREERS IN CHINA</p>
+      <div class="socials"><span>in</span><span>f</span><span>●</span></div>
     </div>
 
-    <footer class="site-footer">
-        <div class="container footer-top">
-            <div class="grid grid-4">
-                <div class="footer-col footer-brand">
-                    <a href="index.html" class="logo">
-    <div class="logo-mark">
-        <svg viewBox="0 0 100 80" width="46" height="37" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 10 5 L 24 5 L 24 58 L 52 58 L 52 70 L 10 70 Z" fill="#FFFFFF"/>
-            <path d="M 22 5 L 24 5 L 24 60 L 52 60 L 52 70 L 22 70 Z" fill="#E2E8F0" opacity="0.4"/>
-            <path d="M 62 10 C 40 10 26 26 26 46 C 26 66 40 82 62 82 C 78 82 90 72 94 58 L 78 58 C 75 64 69 68 62 68 C 50 68 40 58 40 46 C 40 34 50 24 62 24 C 70 24 77 29 80 36 L 95 31 C 89 18 77 10 62 10 Z" fill="#CFA356"/>
-            <path d="M 62 22 C 49 22 38 32 38 46 C 38 60 49 70 62 70 C 72 70 80 63 82 53 L 60 53 L 60 41 L 96 41 L 96 46 C 96 73 78 82 62 82" stroke="#CFA356" stroke-width="2" fill="none"/>
-            <path d="M 60 41 L 96 41 L 96 52 L 62 52 L 62 41 Z" fill="#CFA356"/>
-        </svg>
+    <div class="footer-col">
+      <h4>SCHOOLS</h4>
+      <a href="#schools">Recruitment Services</a>
+      <a href="#schools">Our Process</a>
+      <a href="#">Why Partner With Us</a>
+      <a href="#contact">Request Recruitment</a>
     </div>
-    <div class="logo-text">
-        <div class="brand-name">
-            <span class="brand-title">LANTARA</span>
-            <span class="brand-sub">GLOBAL</span>
-        </div>
-        <span class="brand-tagline">INTERNATIONAL TEACHING CAREERS IN CHINA</span>
+
+    <div class="footer-col">
+      <h4>TEACHERS</h4>
+      <a href="#teachers">Opportunities</a>
+      <a href="#teachers">What We Offer</a>
+      <a href="#teachers">How We Support You</a>
+      <a href="#">Apply Now</a>
     </div>
-</a>
-                    <div class="social-links">
-                        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><rect x="3" y="9" width="4" height="12"/><circle cx="5" cy="4.5" r="2.3"/><path d="M10 9h3.8v2c.6-1.1 2-2.3 4.1-2.3 4.4 0 5.1 2.9 5.1 6.6V21h-4v-5c0-1.2 0-2.7-1.6-2.7s-1.9 1.3-1.9 2.6V21h-4V9z"/></svg></a>
-                        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M15 8.5h3V4.5h-3c-2.8 0-5 2.2-5 5V12H8v4h2v7.5h4V16h3l1-4h-4V9.5c0-.6.4-1 1-1z"/></svg></a>
-                        <a href="#" aria-label="WeChat"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M9.5 4.5C5.4 4.5 2 7.3 2 10.8c0 2 1.1 3.7 2.9 4.9l-.7 2.2 2.4-1.2c.9.3 1.9.4 2.9.4h.3c-.2-.6-.3-1.2-.3-1.9 0-3.5 3.3-6.4 7.5-6.4h.4C16.9 6.1 13.5 4.5 9.5 4.5zM7 9.3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm5 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/><path d="M17.5 11.4c-3.3 0-6 2.3-6 5.1s2.7 5.1 6 5.1c.8 0 1.6-.1 2.3-.4l2 1-.6-1.8c1.4-1 2.3-2.4 2.3-4 0-2.7-2.7-5-6-5zm-2.2 3.3a.8.8 0 1 1 0-1.6.8.8 0 0 1 0 1.6zm4.4 0a.8.8 0 1 1 0-1.6.8.8 0 0 1 0 1.6z"/></svg></a>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h4>SCHOOLS</h4>
-                    <ul>
-                        <li><a href="schools.html">Recruitment Services</a></li>
-                        <li><a href="schools.html#process">Our Process</a></li>
-                        <li><a href="schools.html#why">Why Partner With Us</a></li>
-                        <li><a href="schools.html#contact">Request Recruitment</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>TEACHERS</h4>
-                    <ul>
-                        <li><a href="teachers.html">Opportunities</a></li>
-                        <li><a href="teacher-signup.html">Create Profile</a></li>
-                        <li><a href="teacher-signin.html">Sign In</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>ABOUT</h4>
-                    <ul>
-                        <li><a href="#">Our Story</a></li>
-                        <li><a href="#">Our Mission</a></li>
-                        <li><a href="#">Our Values</a></li>
-                        <li><a href="#">Work With Us</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>CONTACT</h4>
-                    <ul>
-                        <li><a href="index.html#contact">Get In Touch</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Use</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="container footer-bottom-container">
-                <p>&copy; 2026 Lantara Global. All rights reserved.</p>
-                <div class="lang-selector lang-selector-light">
-                    <span class="lang active">EN</span>
-                    <span class="divider">|</span>
-                    <span class="lang">中文</span>
-                </div>
-            </div>
-        </div>
-    </footer>
 
-    <script src="script.js"></script>
-    <script>
-    (function () {
-        const SUPABASE_URL = 'https://kbrebymkkmaxehywjwkp.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_lAh3iNo60ROS9zyKwJgPSg_LK5Sy81k';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <div class="footer-col">
+      <h4>ABOUT</h4>
+      <a href="#about">Our Story</a>
+      <a href="#about">Our Mission</a>
+      <a href="#about">Our Values</a>
+      <a href="#">Work With Us</a>
+    </div>
 
-        // Password show/hide toggles
-        document.querySelectorAll('.toggle-visibility').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                const input = document.getElementById(btn.dataset.target);
-                input.type = input.type === 'password' ? 'text' : 'password';
-            });
-        });
+    <div class="footer-col">
+      <h4>CONTACT</h4>
+      <a href="#contact">Get In Touch</a>
+      <a href="#">FAQ</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+    </div>
+  </div>
 
-        // CV dropzone
-        const dropzone = document.getElementById('cv-dropzone');
-        const fileInput = document.getElementById('cv-file');
-        const cvLabel = document.getElementById('cv-label');
-        dropzone.addEventListener('click', function () { fileInput.click(); });
-        dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.style.borderColor = 'var(--gold-accent)'; });
-        dropzone.addEventListener('dragleave', function () { dropzone.style.borderColor = ''; });
-        dropzone.addEventListener('drop', function (e) {
-            e.preventDefault();
-            if (e.dataTransfer.files.length) {
-                fileInput.files = e.dataTransfer.files;
-                updateCvLabel();
-            }
-        });
-        fileInput.addEventListener('change', updateCvLabel);
-        function updateCvLabel() {
-            if (fileInput.files.length) {
-                cvLabel.innerHTML = '<span class="cv-filename">' + fileInput.files[0].name + '</span>';
-            }
-        }
+  <div class="container footer-bottom">
+    <span>© 2025 Lantara Global. All rights reserved.</span>
+    <span>EN&nbsp; | &nbsp;中文</span>
+  </div>
+</footer>
 
-        const form = document.getElementById('signup-form');
-        const errorBox = document.getElementById('form-error');
-        const successBox = document.getElementById('form-success');
-        const submitBtn = document.getElementById('submit-btn');
-
-        function showError(msg) {
-            errorBox.textContent = msg;
-            errorBox.style.display = 'block';
-            successBox.style.display = 'none';
-        }
-
-        form.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            errorBox.style.display = 'none';
-            successBox.style.display = 'none';
-
-            const firstName = document.getElementById('first-name').value.trim();
-            const lastName = document.getElementById('last-name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const nationality = document.getElementById('nationality').value;
-            const country = document.getElementById('country').value;
-            const consent = document.getElementById('consent').checked;
-            const cvFile = fileInput.files[0];
-
-            if (!firstName || !lastName || !email || !nationality || !country) {
-                showError('Please fill in all required fields.');
-                return;
-            }
-            if (password.length < 8) {
-                showError('Password must be at least 8 characters.');
-                return;
-            }
-            if (password !== confirmPassword) {
-                showError('Passwords do not match.');
-                return;
-            }
-            if (!consent) {
-                showError('Please agree to the Privacy Policy and Terms of Service to continue.');
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating your profile…';
-
-            try {
-                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                    email: email,
-                    password: password
-                });
-                if (signUpError) throw signUpError;
-
-                const userId = signUpData.user ? signUpData.user.id : null;
-                if (!userId) throw new Error('Account created, but no user ID was returned. Please try signing in.');
-
-                const { error: profileError } = await supabase.from('profiles').insert({
-                    id: userId,
-                    role: 'teacher',
-                    email: email
-                });
-                if (profileError) throw profileError;
-
-                let cvUrl = null;
-                if (cvFile) {
-                    const path = userId + '/' + Date.now() + '-' + cvFile.name;
-                    const { error: uploadError } = await supabase.storage
-                        .from('candidate-documents')
-                        .upload(path, cvFile);
-                    if (uploadError) throw uploadError;
-                    cvUrl = path;
-                }
-
-                const { error: candidateError } = await supabase.from('candidates').insert({
-                    id: userId,
-                    first_name: firstName,
-                    last_name: lastName,
-                    nationality: nationality,
-                    country_of_residence: country,
-                    cv_url: cvUrl
-                });
-                if (candidateError) throw candidateError;
-
-                successBox.textContent = 'Your candidate profile has been created. Check your email to confirm your account, then sign in to continue.';
-                successBox.style.display = 'block';
-                form.reset();
-                cvLabel.innerHTML = 'Click to upload your CV or drag and drop<br><span style="font-size:0.75rem;">PDF or DOC, max 5MB</span>';
-            } catch (err) {
-                showError(err.message || 'Something went wrong. Please try again.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Create Candidate Profile <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-            }
-        });
-    })();
-    </script>
 </body>
 </html>
