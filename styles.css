@@ -216,8 +216,9 @@ img { max-width: 100%; height: auto; display: block; }
 
 .main-nav ul {
     display: flex;
-    gap: 32px;
+    gap: 22px; /* Decreased slightly from 32px to cleanly accommodate "Sign Up / Sign In" */
 }
+
 
 .main-nav a {
     font-size: 0.9rem;
