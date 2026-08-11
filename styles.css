@@ -711,3 +711,185 @@ img { max-width: 100%; height: auto; display: block; }
     text-transform: uppercase;
     white-space: nowrap;
 }
+
+/* ==========================================================================
+   Exact Logo Styles
+   ========================================================================== */
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.logo:hover {
+    opacity: 0.92;
+}
+
+.logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    display: flex;
+    flex-direction: column;
+    line-height: 0.95;
+}
+
+.brand-title {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    color: #FFFFFF;
+}
+
+.brand-sub {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    color: #CFA356;
+    margin-top: 2px;
+}
+
+.brand-tagline {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 0.42rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: #FFFFFF;
+    margin-top: 5px;
+    white-space: nowrap;
+    opacity: 0.9;
+}
+
+/* ==========================================================================
+   Global Interactive Hover Effects
+   ========================================================================== */
+
+/* Main Navigation Links with Gold Underline Slide */
+.main-nav ul {
+    display: flex;
+    gap: 26px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.main-nav a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.92rem;
+    position: relative;
+    padding: 6px 0;
+    transition: color 0.3s ease;
+}
+
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #CFA356;
+    transition: width 0.3s ease;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: #CFA356;
+}
+
+.main-nav a:hover::after,
+.main-nav a.active::after {
+    width: 100%;
+}
+
+/* Button Hovers */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-gold {
+    background-color: #CFA356;
+    color: #0B162C;
+    border: 1px solid #CFA356;
+}
+
+.btn-gold:hover {
+    background-color: #dfb262;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(207, 163, 86, 0.35);
+}
+
+.btn-outline-gold {
+    border: 1px solid #CFA356;
+    color: #CFA356;
+    background-color: transparent;
+}
+
+.btn-outline-gold:hover {
+    background-color: #CFA356;
+    color: #0B162C;
+    transform: translateY(-2px);
+}
+
+.btn-navy {
+    background-color: #0B162C;
+    color: #FFFFFF;
+    border: 1px solid #0B162C;
+}
+
+.btn-navy:hover {
+    background-color: #152749;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(11, 22, 44, 0.25);
+}
+
+/* Why Lantara Cards Hover Lift */
+.why-card {
+    background: #FFFFFF;
+    padding: 32px 24px;
+    border-radius: 4px;
+    border: 1px solid #E2E8F0;
+    transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.why-card:hover {
+    transform: translateY(-6px);
+    border-color: #CFA356;
+    box-shadow: 0 12px 28px rgba(207, 163, 86, 0.18);
+}
+
+/* Smooth Image Scale on Hover */
+.feature-media img,
+.about-media img {
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.feature-media:hover img,
+.about-media:hover img {
+    transform: scale(1.02);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
