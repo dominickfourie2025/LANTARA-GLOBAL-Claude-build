@@ -342,8 +342,8 @@
 
   .global-reach img{
   width:100%;
-  max-width:500px;
-  height:267px;
+  max-width:300px;
+  height:170px;
   object-fit:contain;
   margin:0 auto;
   display:block;
