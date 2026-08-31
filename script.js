@@ -123,3 +123,12 @@
       console.log('Form submitted (backend not yet connected):', form.id);
     });
   });
+
+const { data, error } = await supabase.auth.signUp({
+  email: 'user@example.com',
+  password: 'your-password',
+  options: {
+    // Explicitly set where the user should go AFTER clicking the email link:
+    emailRedirectTo: 'https://github.com/dominickfourie2025/LANTARA-GLOBAL-Claude-build/blob/main/teacher-dashboard.html',
+  },
+})
