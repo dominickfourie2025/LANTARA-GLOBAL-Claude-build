@@ -338,18 +338,28 @@ textarea{ resize:vertical; min-height:120px; }
 .info-row strong{ display:block; font-size:14.5px; color:var(--navy); margin-bottom:3px; font-weight:600; }
 .info-row span{ font-size:13.5px; color:var(--muted); }
 
-/* Global Reach (World Map Fix) */
-.global-reach{ margin-top:48px; text-align:center; }
-.global-reach img{
-  max-width:480px;
-  max-height:240px;
-  width:100%;
-  height:auto;
-  object-fit:contain;
-  margin:0 auto;
-  display:block;
+/* Global Reach (Small Square Fix) */
+.global-reach {
+  margin-top: 48px;
+  text-align: center;
 }
-.global-reach p{ color:var(--muted); font-size:13px; letter-spacing:0.02em; margin-top:12px; }
+
+.global-reach img {
+  width: 100%;
+  max-width: 180px;      /* Restricts maximum width to a small size */
+  max-height: 180px;     /* Restricts maximum height to match width */
+  aspect-ratio: 1 / 1;   /* Enforces square proportions */
+  object-fit: contain;   /* Preserves original aspect ratio inside the square */
+  margin: 0 auto;
+  display: block;
+}
+
+.global-reach p {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  margin-top: 12px;
+}
 
 /* Footer */
 footer{ background:var(--navy); color:rgba(255,255,255,0.68); padding-top:80px; }
