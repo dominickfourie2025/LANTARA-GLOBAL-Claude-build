@@ -1,4 +1,3 @@
-
 // TEMPORARY DIAGNOSTIC VERSION — do not leave this in production
 async function initEmployerShell() {
   console.log('[Lantara] initEmployerShell started');
