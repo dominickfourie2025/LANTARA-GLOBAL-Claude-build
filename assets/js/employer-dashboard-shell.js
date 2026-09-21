@@ -2,12 +2,34 @@
 // Requires assets/js/supabase.js and supabase-config.js loaded first.
 
 async function initEmployerShell() {
+  // Wait until Supabase has fully restored the session from storage.
+  var session = null;
+
   var sessionResult = await sb.auth.getSession();
-  var session = sessionResult.data.session;
+  session = sessionResult.data.session;
+
+  if (!session) {
+    session = await new Promise(function (resolve) {
+      var timeout = setTimeout(function () {
+        if (subscription) subscription.unsubscribe();
+        resolve(null);
+      }, 2500);
+
+      var { data: { subscription } } = sb.auth.onAuthStateChange(function (event, s) {
+        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+          clearTimeout(timeout);
+          if (subscription) subscription.unsubscribe();
+          resolve(s);
+        }
+      });
+    });
+  }
+
   if (!session) {
     window.location.href = 'employer-sign-in.html';
     throw new Error('No session');
   }
+
   var user = session.user;
 
   var employerResult = await sb.from('employers').select('*').eq('id', user.id).single();
