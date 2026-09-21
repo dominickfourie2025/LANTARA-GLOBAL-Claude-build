@@ -4,12 +4,37 @@
 // doing its own page-specific data fetching.
 
 async function initDashShell() {
+  // Wait until Supabase has fully restored the session from storage.
+  // A plain getSession() right after a page navigation can return null
+  // even when the user is signed in — that causes the flicker → redirect
+  // back to the sign-in page.
+  var session = null;
+
   var sessionResult = await sb.auth.getSession();
-  var session = sessionResult.data.session;
+  session = sessionResult.data.session;
+
+  if (!session) {
+    session = await new Promise(function (resolve) {
+      var timeout = setTimeout(function () {
+        if (subscription) subscription.unsubscribe();
+        resolve(null);
+      }, 2500);
+
+      var { data: { subscription } } = sb.auth.onAuthStateChange(function (event, s) {
+        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+          clearTimeout(timeout);
+          if (subscription) subscription.unsubscribe();
+          resolve(s);
+        }
+      });
+    });
+  }
+
   if (!session) {
     window.location.href = 'teacher-sign-in.html';
     throw new Error('No session'); // stop the calling page's script here
   }
+
   var user = session.user;
 
   var candidateResult = await sb.from('candidates').select('*').eq('id', user.id).single();
