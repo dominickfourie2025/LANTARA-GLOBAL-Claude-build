@@ -20,6 +20,24 @@ async function initEmployerShell() {
     throw new Error('Not an employer account');
   }
 
+  // Example error handling in employer-dashboard-shell.js
+const { data, error } = await supabase
+  .from('employers')
+  .select('*')
+  .eq('id', user.id)
+  .single();
+
+if (error) {
+  console.error("Failed to load employer profile:", error.message);
+  // Do not immediately redirect if it's a server/network error
+  alert("Server error loading profile. Please try again later.");
+  return;
+}
+
+if (!data) {
+  throw new Error("Not an employer account");
+}
+
   var isActive = employer.status === 'active';
 
   var nameEl = document.getElementById('dash-profile-name');
